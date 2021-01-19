@@ -10,6 +10,7 @@ class TaskDialog(QDialog):
         self.taskNameEdit = QLineEdit()
         self.taskDescriptionEdit = QPlainTextEdit()
 
+        # self.deleteTaskButton = 
         self.buttonBox = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
 
         self.buttonBox.accepted.connect(self.getTask)

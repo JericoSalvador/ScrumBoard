@@ -84,6 +84,7 @@ class ScrumBoard(QWidget):
             oldStatus = db.getTask
             newStatus = dialog.getNewStatus()
 
+
     def loadTask(self): 
         for status in self.titles: 
 
@@ -91,7 +92,8 @@ class ScrumBoard(QWidget):
                     layout = self.taskLayouts[status]
                     layout.addWidget(Task(parent = self,title=title, description=description))
 
-    def removeTaskFromLayout(self, layout, taskname):
+    def removeTaskFromLayout(self, status, taskname):
+        layout = self.taskLayouts[status]
         for i in range(layout.count()):
             layout_item = layout.itemAt(i)
             if (layout_item): 
@@ -107,9 +109,8 @@ class ScrumBoard(QWidget):
 
     def moveTask(self, oldStatus, newStatus, taskname): 
         try: 
-            srcLayout = self.taskLayouts[oldStatus]
             destLayout = self.taskLayouts[newStatus]
-            title, description = self.removeTaskFromLayout(srcLayout, taskname)
+            title, description = self.removeTaskFromLayout(oldStatus, taskname)
             self.addTaskToLayout(destLayout, title, description)
             self.db.changeStatus(taskname, newStatus)
 

@@ -37,6 +37,12 @@ class Task(QWidget):
             self.parent.moveTask(oldStatus, newStatus, self.title)
             db.changeStatus(taskname = self.title, status=newStatus)
         
+        elif dialog.deleteTask(): 
+            print("trying to delete")
+            db = BoardDatabase()
+            oldStatus = db.getStatus(self.title)
+            self.parent.removeTaskFromLayout(oldStatus, self.title)
+        
 
 if __name__ == "__main__":
     import sys 
