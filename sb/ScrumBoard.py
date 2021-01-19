@@ -52,7 +52,7 @@ class ScrumBoard(QWidget):
 
     def createAddTaskButton(self): 
         button = QPushButton(text="Add Task")
-        button.clicked.connect(self.addTask)
+        button.clicked.connect(lambda : self.addTask(self.taskLayouts['To Do']))
         self.layout.addWidget(button, 2, 0, 1, 2)
 
     def createRemoveTaskButton(self): 
@@ -63,31 +63,40 @@ class ScrumBoard(QWidget):
     def createNewSprintButton(self): 
         pass
 
-    def addTask(self): 
+    def addTaskToLayout(self,layout, taskName, taskDescription):
+        layout.addWidget(Task(title=taskName, description=taskDescription))
+        self.db.addTask(taskName, taskDescription)
+        self.db.addTaskToSprint(taskName, "Sprint1")
+
+    def addTask(self, layout):
         dialog = TaskDialog()
         if dialog.exec_() == QDialog.Accepted:
             taskName, taskDescription = dialog.getValues()
 
             if taskName != "": 
-                layout = self.taskLayouts[0]
-                layout.addWidget(Task(title=taskName, description=taskDescription))
+                self.addTaskToLayout(layout, taskName, taskDescription)
 
-                self.db.addTask(taskName, taskDescription)
-                self.db.addTaskToSprint(taskName, "Sprint1")
 
     def loadTask(self): 
         for _, title, description in self.db.getAllTasks(): 
                 layout = self.taskLayouts['To Do']
                 layout.addWidget(Task(title=title, description=description))
 
-    def removeTask(self, layout, taskname):
+    def removeTaskFromLayout(self, layout, taskname):
         for i in range(layout.count()):
             layout_item = layout.itemAt(i)
             if (layout_item): 
                 task = layout_item.widget()
-                if taskname == task.title: 
+                if task.title == taskname: 
                     task.setParent(None)
+                    title = task.title
+                    description = task.description
                     layout.removeItem(layout.itemAt(i))
                     print('removed', taskname)
 
+                    return title, description
+
+    def moveTask(self, srcLayout, destLayout, taskname): 
+        title, description = self.removeTaskFromLayout(srcLayout, taskname)
+        self.addTaskToLayout(destLayout, title, description)
     

@@ -51,6 +51,20 @@ class BoardDatabase():
         except sqlite3.IntegrityError as e: 
             print("Task already exists")
 
+    def removeTask(self, taskname): 
+        try: 
+            self.conn.execute(
+                f"""
+                DELETE FROM Task
+                WHERE title = {taskname}; 
+                """
+            )
+            self.conn.commit()
+            print(taskname, 'deleted')
+
+        except Exception as e:
+            print(e)
+
     def getAllTasks(self):
         cur = self.conn.cursor()
         cur.execute("SELECT * FROM Task;")
@@ -99,6 +113,13 @@ class BoardDatabase():
             WHERE taskid = {taskid} AND sprintname = '{sprintname}'; 
         """)
         self.conn.commit()
+
+    def moveTask(self, taskname, status)
+        self.conn.execute(f"""
+            UPDATE Sprint SET status='{status}'
+            WHERE taskid = {self.getTaskId(taskname)};
+        """
+        )
 
         
 def main():
