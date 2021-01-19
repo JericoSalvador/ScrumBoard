@@ -42,6 +42,7 @@ class Task(QWidget):
             db = BoardDatabase()
             oldStatus = db.getStatus(self.title)
             self.parent.removeTaskFromLayout(oldStatus, self.title)
+            db.removeTask(self.title)
         
 
 if __name__ == "__main__":

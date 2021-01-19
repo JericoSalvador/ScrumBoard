@@ -54,10 +54,14 @@ class BoardDatabase():
 
     def removeTask(self, taskname): 
         try: 
+            self.conn.execute(f"""
+                DELETE FROM Sprint 
+                WHERE taskid = {self.getTaskId(taskname)}; 
+            """)
             self.conn.execute(
                 f"""
                 DELETE FROM Task
-                WHERE title = {taskname}; 
+                WHERE title = '{taskname}'; 
                 """
             )
             self.conn.commit()

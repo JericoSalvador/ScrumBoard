@@ -22,7 +22,6 @@ class ScrumBoard(QWidget):
         self.createTitles()
         self.createTaskArea()
         self.createAddTaskButton()
-        self.createRemoveTaskButton()
         self.loadTask()
     
     def createTitles(self):
@@ -32,7 +31,6 @@ class ScrumBoard(QWidget):
             label.setAlignment(Qt.AlignTop)
             label.setAlignment(Qt.AlignHCenter)
             self.layout.addWidget(label, 0, i)
-
 
     def createTaskArea(self): 
         for i in range(len(self.titles)):
@@ -53,15 +51,7 @@ class ScrumBoard(QWidget):
     def createAddTaskButton(self): 
         button = QPushButton(text="Add Task")
         button.clicked.connect(lambda : self.addTask(self.taskLayouts['To Do']))
-        self.layout.addWidget(button, 2, 0, 1, 2)
-
-    def createRemoveTaskButton(self): 
-        button = QPushButton(text="Move Task")
-        button.clicked.connect(lambda: self.moveTask('To Do', 'In Progress', 'hello'))
-        self.layout.addWidget(button, 2, 2, 1, 2)
-
-    def createNewSprintButton(self): 
-        pass
+        self.layout.addWidget(button, 2, 0, 1, 4)
 
     def addTaskToLayout(self, layout, taskName, taskDescription):
         newTask = Task(parent = self, title=taskName, description=taskDescription)
@@ -76,14 +66,6 @@ class ScrumBoard(QWidget):
                 self.addTaskToLayout(layout, taskName, taskDescription)
                 self.db.addTask(taskName, taskDescription)
                 self.db.addTaskToSprint(taskName, "Sprint1")
-    
-    def showDetails(self, task): 
-        print("in showDetails")
-        dialog = TaskDetail(self, task)
-        if dialog.exec_() == QDialog.Accepted:
-            oldStatus = db.getTask
-            newStatus = dialog.getNewStatus()
-
 
     def loadTask(self): 
         for status in self.titles: 
