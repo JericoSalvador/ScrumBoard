@@ -3,7 +3,7 @@ from PyQt5.QtWidgets import *
 
 class TaskDialog(QDialog): 
     def __init__(self, parent=None): 
-        super().__init__()
+        super().__init__(parent)
 
         self.setWindowTitle("New Task")
 
