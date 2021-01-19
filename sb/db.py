@@ -78,6 +78,15 @@ class BoardDatabase():
         cur.execute(f"SELECT * FROM Task WHERE title = '{taskname}';")
         return cur.fetchall()
 
+    def getStatus(self, taskname, sprintname="Sprint1"): 
+        cur = self.conn.cursor()
+        cur.execute(f""""
+            SELECT status 
+            FROM Sprint 
+            WHERE sprintname = '{sprintname}', taskid = {self.getTaskId(taskname)};
+        """)
+        return cur.fetchone()[0]
+
     def getSprintTasks(self, sprintname): 
         cur = self.conn.cursor()
         cur.execute(f"""

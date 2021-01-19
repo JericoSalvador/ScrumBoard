@@ -1,6 +1,7 @@
 from PyQt5.QtCore import *
 from PyQt5.QtWidgets import * 
 
+from .TaskDetail import TaskDetail
 class Task(QWidget): 
     def __init__(self, parent=None, title="", description=""): 
         self.stylesheet = """
@@ -26,6 +27,13 @@ class Task(QWidget):
 
     def getDescription(self): 
         return self.description
+
+    def mousePressEvent(self, event):
+        dialog = TaskDetail(self,task=self)
+        if dialog.exec_() == QDialog.Accepted:
+            newStatus = dialog.getNewStatus()
+            print(newStatus)
+        
 
 if __name__ == "__main__":
     import sys 

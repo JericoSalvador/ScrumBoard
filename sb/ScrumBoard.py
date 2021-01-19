@@ -64,7 +64,9 @@ class ScrumBoard(QWidget):
         pass
 
     def addTaskToLayout(self,layout, taskName, taskDescription):
-        layout.addWidget(Task(title=taskName, description=taskDescription))
+        newTask = Task(title=taskName, description=taskDescription)
+        newTask.mouseReleaseEvent(lambda event: self.showDetails(newTask))
+        layout.addWidget(newTask)
 
     def addTask(self, layout):
         dialog = TaskDialog(self)
@@ -75,6 +77,13 @@ class ScrumBoard(QWidget):
                 self.addTaskToLayout(layout, taskName, taskDescription)
                 self.db.addTask(taskName, taskDescription)
                 self.db.addTaskToSprint(taskName, "Sprint1")
+    
+    def showDetails(self, task): 
+        dialog = TaskDetail(self, task)
+        if dialog.exec_() == QDialog.Accepted:
+            
+            newStatus = dialog.getNewStatus()
+            print(newStatus)
 
 
     def loadTask(self): 
@@ -105,4 +114,3 @@ class ScrumBoard(QWidget):
         self.addTaskToLayout(destLayout, title, description)
         self.db.changeStatus(taskname, newStatus)
         
-    
