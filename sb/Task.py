@@ -2,25 +2,25 @@ from PyQt5.QtCore import *
 from PyQt5.QtWidgets import * 
 
 from .TaskDetail import TaskDetail
+from .db import BoardDatabase
 class Task(QWidget): 
     def __init__(self, parent=None, title="", description=""): 
         self.stylesheet = """
-        background-color: orange; 
         font-size:18px;
-        border: 1px solid black; 
+        background-color: orange; 
         padding: 3px;
         """
         super().__init__(parent)
-
+        self.parent = parent
         self.title = title
         self.description = description
 
         self.label = QLabel(text=title)
+        self.label.setStyleSheet(self.stylesheet)
         layout = QBoxLayout(QBoxLayout.TopToBottom)
         layout.addWidget(self.label)
 
         self.setLayout(layout)
-        self.setStyleSheet(self.stylesheet)
 
     def taskName(self):
         return self.title
@@ -31,8 +31,11 @@ class Task(QWidget):
     def mousePressEvent(self, event):
         dialog = TaskDetail(self,task=self)
         if dialog.exec_() == QDialog.Accepted:
+            db = BoardDatabase()
+            oldStatus = db.getStatus(self.title)
             newStatus = dialog.getNewStatus()
-            print(newStatus)
+            self.parent.moveTask(oldStatus, newStatus, self.title)
+            db.changeStatus(taskname = self.title, status=newStatus)
         
 
 if __name__ == "__main__":

@@ -63,9 +63,8 @@ class ScrumBoard(QWidget):
     def createNewSprintButton(self): 
         pass
 
-    def addTaskToLayout(self,layout, taskName, taskDescription):
-        newTask = Task(title=taskName, description=taskDescription)
-        newTask.mouseReleaseEvent(lambda event: self.showDetails(newTask))
+    def addTaskToLayout(self, layout, taskName, taskDescription):
+        newTask = Task(parent = self, title=taskName, description=taskDescription)
         layout.addWidget(newTask)
 
     def addTask(self, layout):
@@ -79,19 +78,18 @@ class ScrumBoard(QWidget):
                 self.db.addTaskToSprint(taskName, "Sprint1")
     
     def showDetails(self, task): 
+        print("in showDetails")
         dialog = TaskDetail(self, task)
         if dialog.exec_() == QDialog.Accepted:
-            
+            oldStatus = db.getTask
             newStatus = dialog.getNewStatus()
-            print(newStatus)
-
 
     def loadTask(self): 
         for status in self.titles: 
 
             for title, description in self.db.getTaskWithStatus(status): 
                     layout = self.taskLayouts[status]
-                    layout.addWidget(Task(title=title, description=description))
+                    layout.addWidget(Task(parent = self,title=title, description=description))
 
     def removeTaskFromLayout(self, layout, taskname):
         for i in range(layout.count()):
@@ -108,9 +106,15 @@ class ScrumBoard(QWidget):
                     return title, description
 
     def moveTask(self, oldStatus, newStatus, taskname): 
-        srcLayout = self.taskLayouts[oldStatus]
-        destLayout = self.taskLayouts[newStatus]
-        title, description = self.removeTaskFromLayout(srcLayout, taskname)
-        self.addTaskToLayout(destLayout, title, description)
-        self.db.changeStatus(taskname, newStatus)
-        
+        try: 
+            srcLayout = self.taskLayouts[oldStatus]
+            destLayout = self.taskLayouts[newStatus]
+            title, description = self.removeTaskFromLayout(srcLayout, taskname)
+            self.addTaskToLayout(destLayout, title, description)
+            self.db.changeStatus(taskname, newStatus)
+
+        except Exception as e:
+            print(e)
+    
+    def __str__(self):
+        return "scrumboard"

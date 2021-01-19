@@ -9,6 +9,7 @@ class TaskDetail(QDialog):
         self.db = BoardDatabase; 
 
         self.setWindowTitle(task.title)
+        self.setStyleSheet("background-color:white;")
 
         self.buttonBox = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
         self.combobox = QComboBox()

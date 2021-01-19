@@ -80,10 +80,10 @@ class BoardDatabase():
 
     def getStatus(self, taskname, sprintname="Sprint1"): 
         cur = self.conn.cursor()
-        cur.execute(f""""
+        cur.execute(f"""
             SELECT status 
             FROM Sprint 
-            WHERE sprintname = '{sprintname}', taskid = {self.getTaskId(taskname)};
+            WHERE sprintname = '{sprintname}' AND taskid = {self.getTaskId(taskname)};
         """)
         return cur.fetchone()[0]
 
