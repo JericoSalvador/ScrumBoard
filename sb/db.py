@@ -19,6 +19,7 @@ class BoardDatabase():
             print(e)
     
     def __del__(self):
+        self.conn.commit()
         self.conn.close()
 
     def initializeTables(self):    
@@ -33,7 +34,7 @@ class BoardDatabase():
                 sprintid INTEGER PRIMARY KEY AUTOINCREMENT,
                 sprintname TEXT NOT NULL, 
                 taskid INTEGER,
-                status TEXT DEFAULT 'todo' CHECK(status = 'todo' OR status = 'ip' OR status = 'done'), 
+                status TEXT DEFAULT 'To Do' CHECK(status = 'To Do' OR status = 'In Progress' OR status = 'Done' OR status = 'Testing'), 
                 UNIQUE(sprintname, taskid),
                 FOREIGN KEY(taskId) REFERENCES Task(taskid) ON DELETE CASCADE
                 ); 
@@ -74,7 +75,7 @@ class BoardDatabase():
 
     def getTask(self, taskname):
         cur = self.conn.cursor()
-        cur.execute(f"SELECT taskid FROM Task WHERE title = '{taskname}';")
+        cur.execute(f"SELECT * FROM Task WHERE title = '{taskname}';")
         return cur.fetchall()
 
     def getSprintTasks(self, sprintname): 
@@ -114,13 +115,23 @@ class BoardDatabase():
         """)
         self.conn.commit()
 
-    def moveTask(self, taskname, status)
+    def changeStatus(self, taskname, status):
         self.conn.execute(f"""
             UPDATE Sprint SET status='{status}'
-            WHERE taskid = {self.getTaskId(taskname)};
+            WHERE sprintname = 'Sprint1' AND taskid = {self.getTaskId(taskname)};
         """
         )
+        self.conn.commit()
 
+    def getTaskWithStatus(self, status):
+        cur = self.conn.cursor()
+
+        cur.execute(f"""
+            SELECT Task.title, Task.description
+            FROM Sprint LEFT JOIN Task on Sprint.taskid = Task.taskid
+            WHERE status = '{status}';
+        """)
+        return cur.fetchall()
         
 def main():
     db = BoardDatabase()

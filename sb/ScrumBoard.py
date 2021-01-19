@@ -56,8 +56,8 @@ class ScrumBoard(QWidget):
         self.layout.addWidget(button, 2, 0, 1, 2)
 
     def createRemoveTaskButton(self): 
-        button = QPushButton(text="Delete Task")
-        button.clicked.connect(lambda: self.removeTask(self.taskLayouts['To Do'], "7"))
+        button = QPushButton(text="Move Task")
+        button.clicked.connect(lambda: self.moveTask('To Do', 'In Progress', 'hello'))
         self.layout.addWidget(button, 2, 2, 1, 2)
 
     def createNewSprintButton(self): 
@@ -65,22 +65,24 @@ class ScrumBoard(QWidget):
 
     def addTaskToLayout(self,layout, taskName, taskDescription):
         layout.addWidget(Task(title=taskName, description=taskDescription))
-        self.db.addTask(taskName, taskDescription)
-        self.db.addTaskToSprint(taskName, "Sprint1")
 
     def addTask(self, layout):
-        dialog = TaskDialog()
+        dialog = TaskDialog(self)
         if dialog.exec_() == QDialog.Accepted:
             taskName, taskDescription = dialog.getValues()
 
             if taskName != "": 
                 self.addTaskToLayout(layout, taskName, taskDescription)
+                self.db.addTask(taskName, taskDescription)
+                self.db.addTaskToSprint(taskName, "Sprint1")
 
 
     def loadTask(self): 
-        for _, title, description in self.db.getAllTasks(): 
-                layout = self.taskLayouts['To Do']
-                layout.addWidget(Task(title=title, description=description))
+        for status in self.titles: 
+
+            for title, description in self.db.getTaskWithStatus(status): 
+                    layout = self.taskLayouts[status]
+                    layout.addWidget(Task(title=title, description=description))
 
     def removeTaskFromLayout(self, layout, taskname):
         for i in range(layout.count()):
@@ -96,7 +98,11 @@ class ScrumBoard(QWidget):
 
                     return title, description
 
-    def moveTask(self, srcLayout, destLayout, taskname): 
+    def moveTask(self, oldStatus, newStatus, taskname): 
+        srcLayout = self.taskLayouts[oldStatus]
+        destLayout = self.taskLayouts[newStatus]
         title, description = self.removeTaskFromLayout(srcLayout, taskname)
         self.addTaskToLayout(destLayout, title, description)
+        self.db.changeStatus(taskname, newStatus)
+        
     
