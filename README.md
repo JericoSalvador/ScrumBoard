@@ -14,4 +14,9 @@ Beware: Deleting is permanent
 2. Unzip main
 3. Run (double click) main.exe from main
 
-##### MacOs not supported Yet
+##### Linux and MacOs
+1. Download python and pip
+2. Install PyQt5 
+3. Install SQLite3
+4. Download source code
+5. run "main.py" with python 
